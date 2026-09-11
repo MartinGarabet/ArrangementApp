@@ -1,18 +1,27 @@
 package com.arrangement.model;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Registration {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long eventId;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
+
     private String participantName;
     private String participantEmail;
 
     public Registration() {
     }
 
-    public Registration(Long id, Long eventId, String participantName, String participantEmail) {
+    public Registration(Long id, Event event, String participantName, String participantEmail) {
         this.id = id;
-        this.eventId = eventId;
+        this.event = event;
         this.participantName = participantName;
         this.participantEmail = participantEmail;
     }
@@ -25,12 +34,12 @@ public class Registration {
         this.id = id;
     }
 
-    public Long getEventId() {
-        return eventId;
+    public Event getEvent() {
+        return event;
     }
 
-    public void setEventId(Long eventId) {
-        this.eventId = eventId;
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
     public String getParticipantName() {
