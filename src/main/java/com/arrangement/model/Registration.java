@@ -16,14 +16,17 @@ public class Registration {
     private String participantName;
     private String participantEmail;
 
+    private String status;
+
     public Registration() {
     }
 
-    public Registration(Long id, Event event, String participantName, String participantEmail) {
+    public Registration(Long id, Event event, String participantName, String participantEmail, String status) {
         this.id = id;
         this.event = event;
         this.participantName = participantName;
         this.participantEmail = participantEmail;
+        this.status = status;
     }
 
     public Long getId() {
@@ -56,5 +59,13 @@ public class Registration {
 
     public void setParticipantEmail(String participantEmail) {
         this.participantEmail = participantEmail;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

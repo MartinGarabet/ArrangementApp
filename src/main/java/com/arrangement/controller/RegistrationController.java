@@ -28,11 +28,22 @@ public class RegistrationController {
 
     @PostMapping
     public Registration register(@PathVariable Long eventId, @RequestBody Registration registration) {
-        Optional<Event> event = eventRepository.findById(eventId);
-        if (event.isEmpty()) {
+        Optional<Event> eventOpt = eventRepository.findById(eventId);
+        if (eventOpt.isEmpty()) {
             throw new RuntimeException("Fant ikke arrangement med id " + eventId);
         }
-        registration.setEvent(event.get());
+
+        Event event = eventOpt.get();
+        registration.setEvent(event);
+
+        long confirmedCount = registrationRepository.countByEventIdAndStatus(eventId, "CONFIRMED");
+
+        if (confirmedCount < event.getCapacity()) {
+            registration.setStatus("CONFIRMED");
+        } else {
+            registration.setStatus("WAITLISTED");
+        }
+
         return registrationRepository.save(registration);
     }
 }

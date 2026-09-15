@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface RegistrationRepository extends JpaRepository<Registration, Long> {
     List<Registration> findByEventId(Long eventId);
+    long countByEventIdAndStatus(Long eventId, String status);
 }
