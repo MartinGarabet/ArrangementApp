@@ -2,6 +2,8 @@
 
 Et REST API med tilhørende enkel frontend for å opprette arrangementer og melde seg på dem, med kapasitetsgrenser og automatisk venteliste når et arrangement er fullt.
 
+<img width="496" height="859" alt="arrangement" src="https://github.com/user-attachments/assets/ac7d2e04-7c9a-4e53-a028-442bc8ad08a4" />
+
 ## Funksjonalitet
 
 - Brukerregistrering og innlogging med JWT-autentisering
