@@ -13,11 +13,17 @@
 <body>
 
 <h1>Arrangementer</h1>
+<h2>Registrer ny bruker</h2>
+<input type="text" id="registerName" placeholder="Navn">
+<input type="email" id="registerEmail" placeholder="E-post">
+<input type="password" id="registerPassword" placeholder="Passord">
+<button onclick="handleRegister()">Registrer</button>
 
-<h2>Innloggingstoken</h2>
-<p>Lim inn token fra <code>/auth/login</code> (midlertidig løsning):</p>
-<input type="text" id="tokenInput" placeholder="JWT token her">
-<button onclick="saveToken()">Lagre token</button>
+<h2>Logg inn</h2>
+<input type="email" id="loginEmail" placeholder="E-post">
+<input type="password" id="loginPassword" placeholder="Passord">
+<button onclick="handleLogin()">Logg inn</button>
+<p id="loginStatus"></p>
 
 <h2>Opprett nytt arrangement</h2>
 <input type="text" id="titleInput" placeholder="Tittel">
@@ -59,7 +65,8 @@
         events.forEach(event => {
             const div = document.createElement('div');
             div.className = 'event';
-            div.innerText = event.title + ' (kapasitet: ' + event.capacity + ')';
+            div.innerHTML = event.title + ' (kapasitet: ' + event.capacity + ') ' +
+                '<button onclick="handleRegisterForEvent(' + event.id + ')">Meld meg på</button>';
             listDiv.appendChild(div);
         });
     }
@@ -81,6 +88,64 @@
             loadEvents();
         } else {
             alert('Kunne ikke opprette arrangement. Sjekk at du har lagret et gyldig token.');
+        }
+    }
+
+    async function handleRegister() {
+        const name = document.getElementById('registerName').value;
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+
+        const response = await fetch('/users/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, email: email, password: password })
+        });
+
+        if (response.ok) {
+            alert('Registrert! Du kan nå logge inn.');
+        } else {
+            alert('Registrering feilet. Kanskje e-posten er i bruk?');
+        }
+    }
+
+    async function handleLogin() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        const response = await fetch('/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, password: password })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('jwtToken', data.token);
+            document.getElementById('loginStatus').innerText = 'Innlogget!';
+            loadEvents();
+        } else {
+            document.getElementById('loginStatus').innerText = 'Feil e-post eller passord.';
+        }
+    }
+
+    async function handleRegisterForEvent(eventId) {
+        const name = prompt('Navnet ditt:');
+        const email = prompt('E-posten din:');
+
+        const response = await fetch('/events/' + eventId + '/registrations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getToken()
+            },
+            body: JSON.stringify({ participantName: name, participantEmail: email })
+        });
+
+        if (response.ok) {
+            alert('Påmeldt!');
+        } else {
+            alert('Påmelding feilet. Er du logget inn?');
         }
     }
 </script>
